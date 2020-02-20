@@ -7,6 +7,12 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.Locale;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -19,23 +25,24 @@ import java.util.zip.ZipInputStream;
  */
 public class UnzipUtitlity {
     public static void main(String[] args) throws IOException {
-        String fileZip = "C:\\Users\\DELL\\Desktop\\uber-invoice\\invoices-2020-01-01T10_37_23-2020-01-01T20_43_59.zip";
-        File destDir = new File("C:\\Users\\DELL\\Desktop\\fileUber");
-        byte[] buffer = new byte[1024];
-        ZipInputStream zis = new ZipInputStream(new FileInputStream(fileZip));
-        ZipEntry zipEntry = zis.getNextEntry();
-        while (zipEntry != null) {
-            File newFile = newFile(destDir, zipEntry);
-            FileOutputStream fos = new FileOutputStream(newFile);
-            int len;
-            while ((len = zis.read(buffer)) > 0) {
-                fos.write(buffer, 0, len);
-            }
-            fos.close();
-            zipEntry = zis.getNextEntry();
-        }
-        zis.closeEntry();
-        zis.close();
+//        String fileZip = "C:\\Users\\DELL\\Desktop\\uber-invoice\\invoices-2020-01-04T20_31_32-2020-01-09T16_47_06.zip";
+//        File destDir = new File("C:\\Users\\DELL\\Desktop\\fileUber");
+//        byte[] buffer = new byte[1024];
+//        ZipInputStream zis = new ZipInputStream(new FileInputStream(fileZip));
+//        ZipEntry zipEntry = zis.getNextEntry();
+//        while (zipEntry != null) {
+//            File newFile = newFile(destDir, zipEntry);
+//            FileOutputStream fos = new FileOutputStream(newFile);
+//            int len;
+//            while ((len = zis.read(buffer)) > 0) {
+//                fos.write(buffer, 0, len);
+//            }
+//            fos.close();
+//            zipEntry = zis.getNextEntry();
+//        }
+//        zis.closeEntry();
+//        zis.close();
+//
 
 
         try (Stream<Path> paths = Files.walk(Paths.get("C:\\Users\\DELL\\Desktop\\fileUber"))) {
@@ -44,7 +51,7 @@ public class UnzipUtitlity {
                     .forEach(x -> {
                         try {
                             readPDF(x.toString());
-                        } catch (IOException e) {
+                        } catch (IOException | ParseException e) {
                             e.printStackTrace();
                         }
                     });
@@ -65,8 +72,10 @@ public class UnzipUtitlity {
     }
 
 
-    public static void readPDF(String filePath) throws IOException {
-
+    public static void readPDF(String filePath) throws IOException, ParseException {
+        Entity buyer = new Entity();
+        Entity seller = new Entity();
+        InvoiceData data = new InvoiceData();
         String input = "file:///" + filePath;
         URL url = new URL(input);
 
@@ -78,7 +87,46 @@ public class UnzipUtitlity {
         document = PDDocument.load(fileparse);
 
         String output = new PDFTextStripper().getText(document);
-        System.out.println(output);
+//        System.out.println(output);
+        String[] lines = output.split("\\r?\\n");
+
+        for (int i = 0; i < lines.length; i++) {
+            System.out.print(lines[i]);
+            System.out.println("  " + i);
+
+
+            buyer.setName(lines[2]);
+            buyer.setAddress(lines[3]);
+            buyer.setPostalCode(lines[4]);
+            buyer.setCity(lines[5]);
+            buyer.setNip(lines[6]);
+
+            seller.setName(lines[9]);
+            seller.setAddress(lines[10]);
+            seller.setPostalCode(lines[11]);
+            seller.setCity(lines[12]);
+            seller.setNip(lines[13]);
+
+            String[] numberData = lines[14].split(":");
+            data.setNumber(numberData[1]);
+
+            String[] dateData = lines[15].split(":");
+            data.setDateInString(dateData[1]);
+
+            String[] mainData = lines[23].split("\\s");
+            for (String in : mainData
+            ) {
+                System.out.println(in);
+            }
+            DateFormat format = new SimpleDateFormat("dd.MM.yyyy", Locale.ENGLISH);
+            Date date = format.parse(mainData[1]);
+            data.setDate(date);
+            System.out.println("---------------------------------------------------");
+        }
+        System.out.println(buyer.toString());
+        System.out.println(seller.toString());
+        System.out.println(data.toString());
+        System.out.println("********************************************************");
         document.close();
     }
 
