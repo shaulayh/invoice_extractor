@@ -114,13 +114,13 @@ public class UnzipUtitlity {
             data.setDateInString(dateData[1]);
 
             String[] mainData = lines[23].split("\\s");
-            for (String in : mainData
-            ) {
-                System.out.println(in);
-            }
+
             DateFormat format = new SimpleDateFormat("dd.MM.yyyy", Locale.ENGLISH);
             Date date = format.parse(mainData[1]);
             data.setDate(date);
+
+//            data.setQuantity(Integer.parseInt(mainData[4]));
+            data.setNetto(Double.parseDouble(mainData[9]));
             System.out.println("---------------------------------------------------");
         }
         System.out.println(buyer.toString());

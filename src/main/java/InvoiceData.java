@@ -5,6 +5,42 @@ public class InvoiceData {
     private String number;
     private Date date = new Date();
     private String dateInString;
+    private int quantity;
+    private double netto;
+    private double brutto;
+    private double vatRate;
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+    public double getNetto() {
+        return netto;
+    }
+
+    public void setNetto(double netto) {
+        this.netto = netto;
+    }
+
+    public double getBrutto() {
+        return brutto;
+    }
+
+    public void setBrutto(double brutto) {
+        this.brutto = brutto;
+    }
+
+    public double getVatRate() {
+        return vatRate;
+    }
+
+    public void setVatRate(double vatRate) {
+        this.vatRate = vatRate;
+    }
 
     public String getNumber() {
         return number;
