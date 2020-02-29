@@ -9,6 +9,24 @@ public class InvoiceData {
     private double netto;
     private double brutto;
     private double vatRate;
+    private double vatAmount;
+    private String service;
+
+    public String getService() {
+        return service;
+    }
+
+    public void setService(String service) {
+        this.service = service;
+    }
+
+    public double getVatAmount() {
+        return vatAmount;
+    }
+
+    public void setVatAmount(double vatAmount) {
+        this.vatAmount = vatAmount;
+    }
 
     public int getQuantity() {
         return quantity;
@@ -72,6 +90,12 @@ public class InvoiceData {
                 "number='" + number + '\'' +
                 ", date=" + date +
                 ", dateInString='" + dateInString + '\'' +
+                ", quantity=" + quantity +
+                ", netto=" + netto +
+                ", brutto=" + brutto +
+                ", vatRate=" + vatRate +
+                ", vatAmount=" + vatAmount +
+                ", service='" + service + '\'' +
                 '}';
     }
 }
